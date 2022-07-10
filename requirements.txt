@@ -1,1 +1,1 @@
-telebot
+pytelegrambotapi==4.5.1

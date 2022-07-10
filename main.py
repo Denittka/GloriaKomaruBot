@@ -100,19 +100,19 @@ def get_gloria(message):
 @bot.message_handler(commands=['min'])
 def min_gloria(message):
     if not check_moder(message.from_user.id):
-        bot.reply_to(message, "Посторонись, челядь.")
+        bot.reply_to(message, "Вы не находитесь в списке администраторов.")
         return
     if len(message.text.split()) < 2:
-        bot.reply_to(message, "Так сколько убавлять-то?")
+        bot.reply_to(message, "Недостаточно аргументов, укажите количество Глориа.")
         return
     if len(message.text.split()) > 2:
-        bot.reply_to(message, "И что из этого убавлять?..")
+        bot.reply_to(message, "Слишком много аргументов.")
         return
     if message.text.split()[1].isdigit() is False:
-        bot.reply_to(message, "Мне текст убавлять?..")
+        bot.reply_to(message, "Некорректный Глориа, пожалуйста, введите число.")
         return
     if message.reply_to_message is None:
-        bot.reply_to(message, "Должно быть ответом на сообщение пользователя")
+        bot.reply_to(message, "Команда должна быть ответом на сообщение.")
         return
     else:
         con = sqlite3.connect("gloria.db")
@@ -122,14 +122,14 @@ def min_gloria(message):
         if len(result) == 0:
             cur.execute("INSERT INTO users VALUES (%i, 0)" % user.id)
             con.commit()
-            bot.reply_to(message, "У пользователя и так всё по нулям")
+            bot.reply_to(message, "Глориа пользователя уже равняется нулю")
         else:
             gloria = result[0][1] - int(message.text.split()[1])
             if gloria < 0:
                 gloria = 0
         cur.execute("UPDATE users SET gloria = %i WHERE id = %i" % (gloria, user.id))
         con.commit()
-        bot.reply_to(message, "Теперь у пользователя %i очков чести" % gloria)
+        bot.reply_to(message, "Теперь у пользователя %i Глориа" % gloria)
         con.close()
         return
 
@@ -140,7 +140,7 @@ def top_gloria(message):
     result = list(filter(lambda x: x[1] != 0, cur.execute("SELECT * FROM users ORDER BY gloria").fetchall()[:5]))
     con.close()
     if len(result) == 0:
-        bot.reply_to(message, "Нет никого")
+        bot.reply_to(message, "Список пользователей пуст.")
         return
     to_reply = "ТОП 5 ПОЛЬЗОВАТЕЛЕЙ:\n"
     for i in range(len(result)):
