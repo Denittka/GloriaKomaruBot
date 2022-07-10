@@ -15,19 +15,19 @@ def check_moder(id):
 @bot.message_handler(commands=['add'])
 def add_gloria(message):
     if not check_moder(message.from_user.id):
-        bot.reply_to(message, "Посторонись, челядь.")
+        bot.reply_to(message, "Только администраторы могут добавлять Глориа.")
         return
     if len(message.text.split()) < 2:
-        bot.reply_to(message, "Так сколько добавлять-то?")
+        bot.reply_to(message, "Недостаточно аргументов. Укажите количество Глориа.")
         return
     if len(message.text.split()) > 2:
-        bot.reply_to(message, "И что из этого добавлять?..")
+        bot.reply_to(message, "Слишком много аргументов.")
         return
     if message.text.split()[1].isdigit() is False:
-        bot.reply_to(message, "Мне текст добавлять?..")
+        bot.reply_to(message, "Глориа некорректен, пожалуйста, введите число.")
         return
     if message.reply_to_message is None:
-        bot.reply_to(message, "Должно быть ответом на сообщение пользователя")
+        bot.reply_to(message, "Команда должна быть ответом на сообщение.")
         return
     else:
         con = sqlite3.connect("gloria.db")
@@ -42,26 +42,26 @@ def add_gloria(message):
             gloria = result[0][1] + int(message.text.split()[1])
         cur.execute("UPDATE users SET gloria = %i WHERE id = %i" % (gloria, user.id))
         con.commit()
-        bot.reply_to(message, "Теперь у пользователя %i очков чести" % gloria)
+        bot.reply_to(message, "Теперь у пользователя %i Глориа" % gloria)
         con.close()
         return
 
 @bot.message_handler(commands=['change'])
 def change_gloria(message):
     if not check_moder(message.from_user.id):
-        bot.reply_to(message, "Посторонись, челядь.")
+        bot.reply_to(message, "Только администраторы могут менять Глориа.")
         return
     if len(message.text.split()) < 2:
-        bot.reply_to(message, "На сколько менять-то?")
+        bot.reply_to(message, "Недостаточно аргументов, укажите количество Глориа.")
         return
     if len(message.text.split()) > 2:
-        bot.reply_to(message, "И на что из этого менять?..")
+        bot.reply_to(message, "Сликшом много аргументов.")
         return
     if message.text.split()[1].isdigit() is False:
-        bot.reply_to(message, "Мне на текст менять?..")
+        bot.reply_to(message, "Глориа некорректен, пожалуйста, введите число.")
         return
     if message.reply_to_message is None:
-        bot.reply_to(message, "Должно быть ответом на сообщение пользователя")
+        bot.reply_to(message, "Команда должна быть ответом на сообщение.")
         return
     else:
         con = sqlite3.connect("gloria.db")
@@ -74,7 +74,7 @@ def change_gloria(message):
         gloria = int(message.text.split()[1])
         cur.execute("UPDATE users SET gloria = %i WHERE id = %i" % (gloria, user.id))
         con.commit()
-        bot.reply_to(message, "Теперь у пользователя %i очков чести" % gloria)
+        bot.reply_to(message, "Теперь у пользователя %i Глориа" % gloria)
         con.close()
         return
 
@@ -90,9 +90,9 @@ def get_gloria(message):
     if len(result) == 0:
         cur.execute("INSERT INTO users VALUES (%i, 0)" % user.id)
         con.commit()
-        bot.reply_to(message, "У пользователя 0 очков чести")
+        bot.reply_to(message, "У пользователя 0 Глориа")
     else:
-        bot.reply_to(message, "У пользователя %i очков чести" % result[0][1])
+        bot.reply_to(message, "У пользователя %i Глориа" % result[0][1])
     con.close()
     return
 
@@ -159,21 +159,21 @@ def new_admin(message):
     cur = con.cursor()
     result = cur.execute("SELECT * FROM admins WHERE id = %i" % message.from_user.id).fetchall()
     if len(result) == 0:
-        bot.reply_to(message, "А-та-та, а ты не Ростик и не Кирилл")
+        bot.reply_to(message, "Вы не находитесь в списке администраторов.")
         con.close()
         return
     if message.reply_to_message is None:
-        bot.reply_to(message, "Должно быть ответом на сообщение пользователя")
+        bot.reply_to(message, "Команда должна быть ответом на сообщение.")
         con.close()
         return
     result = cur.execute("SELECT * FROM moders WHERE id = %i" % message.reply_to_message.from_user.id).fetchall()
     if len(result) != 0:
-        bot.reply_to(message, "Уже вообще-то админ..")
+        bot.reply_to(message, "Этот пользователь уже является администратором.")
         con.close()
         return
     cur.execute("INSERT INTO moders VALUES (%i);" % message.reply_to_message.from_user.id)
     con.commit()
-    bot.reply_to(message, "Новый админ добавлен! Танцуем!!!")
+    bot.reply_to(message, "Администратор успешно добавлен.")
     con.close()
     return
 
@@ -183,21 +183,21 @@ def del_admin(message):
     cur = con.cursor()
     result = cur.execute("SELECT * FROM admins WHERE id = %i" % message.from_user.id).fetchall()
     if len(result) == 0:
-        bot.reply_to(message, "А-та-та, а ты не Ростик и не Кирилл")
+        bot.reply_to(message, "Вы не находитесь в списке администраторов.")
         con.close()
         return
     if message.reply_to_message is None:
-        bot.reply_to(message, "Должно быть ответом на сообщение пользователя")
+        bot.reply_to(message, "Команда должна быть ответом на сообщение.")
         con.close()
         return
     result = cur.execute("SELECT * FROM moders WHERE id = %i" % message.reply_to_message.from_user.id).fetchall()
     if len(result) == 0:
-        bot.reply_to(message, "Ещё вообще-то и не админ..")
+        bot.reply_to(message, "Этот пользователь не является администратором.")
         con.close()
         return
     cur.execute("DELETE FROM moders WHERE id = %i;" % message.reply_to_message.from_user.id)
     con.commit()
-    bot.reply_to(message, "Старый админ удалён! Дорогу молодым!!!")
+    bot.reply_to(message, "Администратор успешно удалён.")
     con.close()
     return
 
