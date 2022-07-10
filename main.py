@@ -89,7 +89,7 @@ def get_gloria(message):
     else:
         result = cur.execute("SELECT * FROM users WHERE id = %i" % message.reply_to_message.from_user.id).fetchall()
     if len(result) == 0:
-        cur.execute("INSERT INTO users VALUES (%i, 0)" % user.id)
+        cur.execute("INSERT INTO users VALUES (%i, 0)" % message.reply_to_message.from_user.user.id)
         con.commit()
         bot.reply_to(message, "У пользователя 0 Глориа")
     else:
