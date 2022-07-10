@@ -84,12 +84,16 @@ def get_gloria(message):
     con = sqlite3.connect("gloria.db")
     cur = con.cursor()
     result = []
+    
     if message.reply_to_message is None:
-        result = cur.execute("SELECT * FROM users WHERE id = %i" % message.from_user.id).fetchall()
+        user = message.from_user.id
     else:
-        result = cur.execute("SELECT * FROM users WHERE id = %i" % message.reply_to_message.from_user.id).fetchall()
+        user = message.reply_to_message.from_user.id
+        
+    result = cur.execute("SELECT * FROM users WHERE id = %i" % user.id).fetchall()
+    
     if len(result) == 0:
-        cur.execute("INSERT INTO users VALUES (%i, 0)" % message.reply_to_message.from_user.id)
+        cur.execute("INSERT INTO users VALUES (%i, 0)" % user.id)
         con.commit()
         bot.reply_to(message, "У пользователя 0 Глориа")
     else:
