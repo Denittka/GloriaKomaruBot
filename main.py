@@ -1,7 +1,8 @@
 from telebot import TeleBot
 import sqlite3
+import os
 
-bot = TeleBot(open("token.txt", "r").read().strip())
+bot = TeleBot(os.environ["BOT_TOKEN"])
 
 def check_moder(id):
     con = sqlite3.connect("gloria.db")
