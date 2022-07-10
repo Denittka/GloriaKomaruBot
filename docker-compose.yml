@@ -6,4 +6,8 @@ services:
 
     environment:
       - BOT_TOKEN
+
+    volumes:
+      - ./gloria.db:/app/gloria.db
+
     restart: always
